@@ -6,7 +6,7 @@
       "modulo": "Backend",
       "generacion": "20Js",
       "edad": 25,
-      "id": "1"
+      "id": 1
     },
     {
       "id": 2,
@@ -34,7 +34,7 @@
       "name": "Eduardo",
       "modulo": "Enmaquetado",
       "generacion": "21Js",
-      "edad": 25
+      "edad": 20
     },
     {
       "id": 6,
@@ -100,18 +100,25 @@
       "edad": 25
     },
     {
-      "id": 15,
-      "name": "Alfredo",
-      "modulo": "Backend",
-      "generacion": "20Js",
-      "edad": 28
-    },
-    {
       "name": "Alfredo",
       "modulo": "NodeJs",
       "generacion": "12Js",
       "edad": 28,
-      "id": "15"
+      "id": 16
+    },
+    {
+      "id": 16,
+      "name": "Adrian",
+      "modulo": "Backend",
+      "generacion": "20Js",
+      "edad": 25
+    },
+    {
+      "id": 17,
+      "name": "Adrian",
+      "modulo": "Backend",
+      "generacion": "20Js",
+      "edad": 25
     }
   ]
 }

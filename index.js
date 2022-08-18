@@ -1,11 +1,23 @@
+const { response } = require("express");
 const express = require("express");
 const fs = require("fs");
 const fsPromise = require("fs/promises");
+const { request } = require("http");
 
 const app = express();
 
 //Middlewares
 app.use(express.json());
+//Global
+app.use((request, response, next) => {
+    console.log("Middleware 1");
+    next();
+});
+
+const middleware2 = (request, response, next) => {
+    console.log("Middleware 2");
+    next();
+}
 
 app.get("/", (request, response) => {
     response.write("Welcome :)");
@@ -104,7 +116,7 @@ app.get("/koders/:id", async (request, response) => {
 /**
  * Post koders
  */
- app.post("/koders", async (request, response) => {
+ app.post("/koders", middleware2, async (request, response) => {
     const { body } = request;
     
     const db = await fsPromise.readFile("koders.json", "utf-8");
@@ -143,10 +155,12 @@ app.put("/koders/:id", async (request, response) => {
     }
 
     //update koder
-    koder = body;
-    koder.id = params.id;
+    const changedKoder = {
+        id: parseInt(params.id),
+        ...body
+    }   
 
-    parsedDB.koders[params.id - 1] = koder;
+    parsedDB.koders[params.id - 1] = changedKoder;
 
     console.log(parsedDB.koders)    
 
@@ -155,6 +169,44 @@ app.put("/koders/:id", async (request, response) => {
     //response.status(201);
     response.json(koder);
 });
+
+app.patch("/koders/:id", async (request, response) => {
+    const { body } = request;
+    const { params } = request;
+
+    const db = await fsPromise.readFile("koders.json", "utf-8");
+    const parsedDB = JSON.parse(db);
+    
+    let koder = parsedDB.koders.find((koder) => koder.id === parseInt(params.id));
+    
+    if(!koder){
+        throw new Error("Koder no existe");         
+    }
+
+    //update koder
+    Object.assign(koder,body);
+    await fsPromise.writeFile("koders.json", JSON.stringify(parsedDB, "\n", 2) ,"utf-8")
+    
+    //response.status(201);
+    response.json(koder);
+});
+
+app.delete("/koders/:id", async (request, response) => {
+    const { params } = request;
+    console.log("id", params.id);
+
+    const db = await fsPromise.readFile("koders.json", "utf-8");
+    const parsedDB = JSON.parse(db);
+    
+    const kodersQueSeQuedan = parsedDB.koders.filter((koder) => koder.id !== parseInt(params.id));
+    parsedDB.koders = kodersQueSeQuedan
+        
+    await fsPromise.writeFile("koders.json", JSON.stringify(parsedDB, "\n", 2) ,"utf-8")
+    
+    //response.status(201);
+    response.json(kodersQueSeQuedan);
+});
+
 
 app.listen(8080, () => {
     console.log("Server is listening...");
